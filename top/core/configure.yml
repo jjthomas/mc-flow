@@ -1,0 +1,20 @@
+name: core
+
+commands:
+  - bash get_core_outputs.sh
+
+inputs:
+  - design.v
+
+outputs:
+  - core_tt.lib
+  - core.lef
+  - core.gds
+  - core.lvs.v
+
+postconditions:
+  - assert File( 'outputs/core_tt.lib' ) # must exist
+  - assert File( 'outputs/core.lef' ) # must exist
+  - assert File( 'outputs/core.gds' ) # must exist
+  - assert File( 'outputs/core.lvs.v' ) # must exist
+
