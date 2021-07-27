@@ -1,0 +1,20 @@
+name: group
+
+commands:
+  - bash get_group_outputs.sh
+
+inputs:
+  - design.v
+
+outputs:
+  - group_tt.lib
+  - group.lef
+  - group.gds
+  - group.lvs.v
+
+postconditions:
+  - assert File( 'outputs/group_tt.lib' ) # must exist
+  - assert File( 'outputs/group.lef' ) # must exist
+  - assert File( 'outputs/group.gds' ) # must exist
+  - assert File( 'outputs/group.lvs.v' ) # must exist
+

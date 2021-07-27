@@ -10,4 +10,5 @@ name: custom-init
 
 outputs:
   - add-endcaps-welltaps.tcl
+  - pin-assignments.tcl
 

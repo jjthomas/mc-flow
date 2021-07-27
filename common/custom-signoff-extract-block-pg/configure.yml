@@ -1,15 +1,13 @@
 #=========================================================================
-# Custom Scripts -- init
+# Custom Scripts -- signoff
 #=========================================================================
 
-name: custom-init
+name: custom-signoff-extract-block-pg
 
 #-------------------------------------------------------------------------
 # Inputs and Outputs
 #-------------------------------------------------------------------------
 
 outputs:
-  - add-endcaps-welltaps.tcl
-  - floorplan.tcl
-  - pin-assignments.tcl
+  - generate-results.tcl
 

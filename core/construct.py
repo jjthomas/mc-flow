@@ -53,7 +53,7 @@ def construct():
   rtl = Step(this_dir + '/../rtl')
   custom_init = Step(this_dir + '/custom-init')
   custom_power = Step(this_dir + '/../common/custom-power-leaf')
-  constraints = Step(this_dir + '/../common/constraints')
+  constraints = Step(this_dir + '/constraints')
 
   # Default steps
 

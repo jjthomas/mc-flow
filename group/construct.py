@@ -25,7 +25,7 @@ def construct():
 
   parameters = {
     'construct_path'    : __file__,
-    'design_name'       : 'StreamingWrapper',
+    'design_name'       : 'CoreGroup',
     'clock_period'      : 1.0,
     'adk'               : adk_name,
     'adk_view'          : adk_view,
@@ -49,9 +49,10 @@ def construct():
   # Custom steps
 
   rtl = Step(this_dir + '/../rtl')
-  group = Step(this_dir + '/group')
+  core = Step(this_dir + '/core')
   custom_init = Step(this_dir + '/custom-init')
-  custom_power = Step(this_dir + '/../common/custom-power-hierarchical')
+  custom_power = Step(this_dir + '/../common/custom-power-leaf')
+  custom_signoff = Step(this_dir + '/../common/custom-signoff-extract-block-pg')
   constraints = Step(this_dir + '/constraints')
 
   # Default steps
@@ -72,24 +73,25 @@ def construct():
   drc          = Step( 'mentor-calibre-drc', default=True)
   lvs          = Step( 'mentor-calibre-lvs', default=True)
 
-  # These steps need timing info for groups
+  # These steps need timing info for cores
   tile_steps = \
     [synth, iflow, init, power, place, cts, postcts_hold,
       route, postroute, postroute_hold, signoff, genlib]
 
   for step in tile_steps:
-    step.extend_inputs(['group_tt.lib', 'group.lef'])
+    step.extend_inputs(['core_tt.lib', 'core.lef'])
 
-  # Need the group gds to merge into the final layout
+  # Need the core gds to merge into the final layout
 
-  signoff.extend_inputs(['group.gds'])
+  signoff.extend_inputs(['core.gds'])
 
-  # Need group lvs.v file for LVS
+  # Need core lvs.v file for LVS
 
-  lvs.extend_inputs(['group.lvs.v'])
+  lvs.extend_inputs(['core.lvs.v'])
 
   init.extend_inputs(custom_init.all_outputs())
   power.extend_inputs(custom_power.all_outputs())
+  signoff.extend_inputs(custom_signoff.all_outputs())
 
   #-----------------------------------------------------------------------
   # Graph -- Add nodes
@@ -97,12 +99,13 @@ def construct():
 
   g.add_step(info)
   g.add_step(rtl)
-  g.add_step(group)
+  g.add_step(core)
   g.add_step(constraints)
   g.add_step(synth)
   g.add_step(iflow)
   g.add_step(custom_init)
   g.add_step(custom_power)
+  g.add_step(custom_signoff)
   g.add_step(init)
   g.add_step(power)
   g.add_step(place)
@@ -136,20 +139,20 @@ def construct():
   g.connect_by_name(adk, drc)
   g.connect_by_name(adk, lvs)
 
-  g.connect_by_name(group, synth)
-  g.connect_by_name(group, iflow)
-  g.connect_by_name(group, init)
-  g.connect_by_name(group, power)
-  g.connect_by_name(group, place)
-  g.connect_by_name(group, cts)
-  g.connect_by_name(group, postcts_hold)
-  g.connect_by_name(group, route)
-  g.connect_by_name(group, postroute)
-  g.connect_by_name(group, postroute_hold)
-  g.connect_by_name(group, signoff)
-  g.connect_by_name(group, genlib)
-  g.connect_by_name(group, drc)
-  g.connect_by_name(group, lvs)
+  g.connect_by_name(core, synth)
+  g.connect_by_name(core, iflow)
+  g.connect_by_name(core, init)
+  g.connect_by_name(core, power)
+  g.connect_by_name(core, place)
+  g.connect_by_name(core, cts)
+  g.connect_by_name(core, postcts_hold)
+  g.connect_by_name(core, route)
+  g.connect_by_name(core, postroute)
+  g.connect_by_name(core, postroute_hold)
+  g.connect_by_name(core, signoff)
+  g.connect_by_name(core, genlib)
+  g.connect_by_name(core, drc)
+  g.connect_by_name(core, lvs)
 
   g.connect_by_name(rtl, synth)
   g.connect_by_name(constraints, synth)
@@ -172,6 +175,7 @@ def construct():
 
   g.connect_by_name(custom_init, init)
   g.connect_by_name(custom_power, power)
+  g.connect_by_name(custom_signoff, signoff)
   g.connect_by_name(init, power)
   g.connect_by_name(power, place)
   g.connect_by_name(place, cts)
